@@ -28,10 +28,37 @@ external_components:
 switcher_proxy:
   devices:
     - name: "Water Heater"
+      # switcher_id: "aabbcc"  # omit to auto-discover first device
       power_sensor:
         name: "Water Heater Power"
       remaining_time_sensor:
         name: "Water Heater Time Remaining"
+```
+
+If `switcher_id` is omitted, the component locks onto the first Switcher it sees broadcasting. With multiple Switchers, specify the ID to avoid ambiguity.
+
+### Finding your Switcher ID
+
+Run this on any Linux machine on the same network as your Switcher:
+
+```bash
+sudo tcpdump -i any udp port 20002 -c 10 -w - 2>/dev/null | python3 -c '
+import sys
+seen, data, pos = set(), sys.stdin.buffer.read(), 24
+while pos + 16 <= len(data):
+    pkt_len = int.from_bytes(data[pos+8:pos+12], "little")
+    pkt, pos = data[pos+16:pos+16+pkt_len], pos + 16 + pkt_len
+    if len(pkt) < 117: continue
+    payload = pkt[42:]
+    device_id, name = payload[18:21].hex(), payload[42:74].rstrip(b"\x00").decode("utf-8", errors="ignore")
+    if device_id not in seen: seen.add(device_id); print(f"switcher_id: \"{device_id}\"  # {name}")
+'
+```
+
+Example output:
+```
+switcher_id: "ab12cd"  # Boiler
+switcher_id: "ef34ab"  # Water Heater
 ```
 
 ## Configuration
@@ -40,13 +67,13 @@ switcher_proxy:
 switcher_proxy:
   devices:
     - name: "Water Heater"
-      device_id: "aabbcc"  # optional: filter for specific device
+      switcher_id: "aabbcc"
       power_sensor:
         name: "Water Heater Power"
       remaining_time_sensor:
         name: "Water Heater Time Remaining"
     - name: "Boiler"
-      device_id: "ddeeff"
+      switcher_id: "ddeeff"
       power_sensor:
         name: "Boiler Power"
 ```
@@ -56,7 +83,7 @@ switcher_proxy:
 | Option | Required | Description |
 |--------|----------|-------------|
 | `name` | Yes | Name of the switch entity |
-| `device_id` | No | Filter for specific Switcher (hex, e.g., `aabbcc`) |
+| `switcher_id` | No | Filter for specific Switcher (hex, e.g., `aabbcc`). If omitted, locks onto first device seen. |
 | `power_sensor` | No | Sensor for power consumption (watts) |
 | `remaining_time_sensor` | No | Sensor for remaining run time (seconds) |
 
