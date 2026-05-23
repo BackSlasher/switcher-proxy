@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# ESPHome
+.esphome/
+secrets.yaml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

@@ -1,0 +1,41 @@
+esphome:
+  name: switcher-proxy
+  friendly_name: Switcher Proxy
+
+esp32:
+  board: esp32dev
+
+wifi:
+  ssid: !secret iot_wifi_ssid
+  password: !secret iot_wifi_password
+
+logger:
+  level: DEBUG
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  platform: esphome
+  password: !secret ota_password
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/backslasher/switcher-proxy
+      ref: main
+    components: [switcher_proxy]
+
+switcher_proxy:
+  devices:
+    - name: "Water Heater"
+      # switcher_id: "aabbcc"  # optional: filter for specific Switcher device
+      power_sensor:
+        name: "Water Heater Power"
+      remaining_time_sensor:
+        name: "Water Heater Time Remaining"
+    # - name: "Boiler"
+    #   device_id: "ddeeff"
+    #   power_sensor:
+    #     name: "Boiler Power"

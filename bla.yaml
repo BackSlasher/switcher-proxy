@@ -1,0 +1,60 @@
+esphome:
+  name: vitrina
+
+esp32:
+  board: mhetesp32minikit
+  framework:
+    type: arduino
+
+logger:
+
+api:
+  encryption:
+    key: "QKzALD7OK6d713Ndnx0meCkhkDpv7I3z8aoTNnPTOvc="
+
+ota:
+  - platform: esphome
+    password: "liftoff-defraud-remission"
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/backslasher/switcher-proxy
+      ref: 3d73c50f1d492fee023fb5675d35c1f461455235
+    components: [switcher_proxy]
+
+wifi:
+  ssid: "fortress_jail"
+  password: "prisonbreak"
+  domain: ".lan"
+
+light:
+  - platform: fastled_clockless
+    id: main_led
+    chipset: WS2811
+    pin: 3
+    num_leds: 90
+    rgb_order: BRG
+    name: "Vitrina Light"
+    effects:
+      - addressable_color_wipe:
+      - addressable_rainbow:
+      - addressable_scan:
+      - addressable_twinkle:
+      - addressable_random_twinkle:
+      - addressable_fireworks:
+      - addressable_flicker:
+
+    default_transition_length: 0s
+
+web_server:
+captive_portal:
+
+switcher_proxy:
+  devices:
+    - name: "Water Heater"
+      switcher_id: "21b32f"
+      power_sensor:
+        name: "Water Heater Power"
+      remaining_time_sensor:
+        name: "Water Heater Time Remaining"

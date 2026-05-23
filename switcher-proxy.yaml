@@ -1,0 +1,38 @@
+esphome:
+  name: switcher-proxy
+
+esp32:
+  board: esp32dev
+
+wifi:
+  ssid: "fortress_jail"
+  password: "prisonbreak"
+
+logger:
+
+api:
+  encryption:
+    key: "QKzALD7OK6d713Ndnx0meCkhkDpv7I3z8aoTNnPTOvc="
+
+ota:
+  platform: esphome
+  password: "liftoff-defraud-remission"
+
+web_server:
+  port: 80
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/backslasher/switcher-proxy
+      ref: 4bdc738a1c7b28cb7f044e227beb3cb318e7c1f3
+    components: [switcher_proxy]
+
+switcher_proxy:
+  devices:
+    - name: "Water Heater"
+      switcher_id: "21b32f"
+      power_sensor:
+        name: "Water Heater Power"
+      remaining_time_sensor:
+        name: "Water Heater Time Remaining"
